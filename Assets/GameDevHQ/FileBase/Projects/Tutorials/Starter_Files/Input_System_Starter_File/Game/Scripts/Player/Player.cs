@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Game.Scripts.LiveObjects;
 using Cinemachine;
+using TMPro;
 
 namespace Game.Scripts.Player
 {
@@ -21,6 +22,9 @@ namespace Game.Scripts.Player
         private CinemachineVirtualCamera _followCam;
         [SerializeField]
         private GameObject _model;
+
+        private PlayerInputActions _input;
+        private Vector2 _move;
 
 
         private void OnEnable()
@@ -51,19 +55,31 @@ namespace Game.Scripts.Player
         private void Update()
         {
             if (_canMove == true)
+            {
+                _move = _input.Player.Movement.ReadValue<Vector2>();
                 CalcutateMovement();
+            }
 
         }
 
         private void CalcutateMovement()
         {
             _playerGrounded = _controller.isGrounded;
-            float h = Input.GetAxisRaw("Horizontal");
-            float v = Input.GetAxisRaw("Vertical");
+
+            // LEGACY INPUT SYSTEM
+            //float h = Input.GetAxisRaw("Horizontal");
+            //float v = Input.GetAxisRaw("Vertical");
+
+            //transform.Rotate(transform.up, h);
+            //var direction = transform.forward * v;
+
+            // NEW INPUT SYSTEM
+            float h = _move.x;
+            float v = _move.y;
 
             transform.Rotate(transform.up, h);
-
             var direction = transform.forward * v;
+
             var velocity = direction * _speed;
 
 
