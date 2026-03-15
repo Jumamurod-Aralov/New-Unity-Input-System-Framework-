@@ -80,6 +80,33 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LiftUp"",
+                    ""type"": ""Button"",
+                    ""id"": ""be0b235e-db61-4648-94cf-414989b7654e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""LiftDown"",
+                    ""type"": ""Button"",
+                    ""id"": ""f989679f-b527-4404-a064-794c65bba8a7"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Action"",
+                    ""type"": ""Button"",
+                    ""id"": ""91dbcf37-4e84-4044-8984-9d8da27a5332"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -192,6 +219,39 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Exit"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""513ed301-5db1-488b-9d1d-6903caa9ca7c"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LiftUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""388b831d-9608-48d2-b38a-41bb4dd09289"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LiftDown"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d87a3f28-3778-4704-8dca-a38d2576ff7f"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Action"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -206,6 +266,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Space = m_Player.FindAction("Space", throwIfNotFound: true);
         m_Player_V = m_Player.FindAction("V", throwIfNotFound: true);
         m_Player_Exit = m_Player.FindAction("Exit", throwIfNotFound: true);
+        m_Player_LiftUp = m_Player.FindAction("LiftUp", throwIfNotFound: true);
+        m_Player_LiftDown = m_Player.FindAction("LiftDown", throwIfNotFound: true);
+        m_Player_Action = m_Player.FindAction("Action", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -273,6 +336,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Space;
     private readonly InputAction m_Player_V;
     private readonly InputAction m_Player_Exit;
+    private readonly InputAction m_Player_LiftUp;
+    private readonly InputAction m_Player_LiftDown;
+    private readonly InputAction m_Player_Action;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -283,6 +349,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Space => m_Wrapper.m_Player_Space;
         public InputAction @V => m_Wrapper.m_Player_V;
         public InputAction @Exit => m_Wrapper.m_Player_Exit;
+        public InputAction @LiftUp => m_Wrapper.m_Player_LiftUp;
+        public InputAction @LiftDown => m_Wrapper.m_Player_LiftDown;
+        public InputAction @Action => m_Wrapper.m_Player_Action;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -310,6 +379,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Exit.started += instance.OnExit;
             @Exit.performed += instance.OnExit;
             @Exit.canceled += instance.OnExit;
+            @LiftUp.started += instance.OnLiftUp;
+            @LiftUp.performed += instance.OnLiftUp;
+            @LiftUp.canceled += instance.OnLiftUp;
+            @LiftDown.started += instance.OnLiftDown;
+            @LiftDown.performed += instance.OnLiftDown;
+            @LiftDown.canceled += instance.OnLiftDown;
+            @Action.started += instance.OnAction;
+            @Action.performed += instance.OnAction;
+            @Action.canceled += instance.OnAction;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -332,6 +410,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Exit.started -= instance.OnExit;
             @Exit.performed -= instance.OnExit;
             @Exit.canceled -= instance.OnExit;
+            @LiftUp.started -= instance.OnLiftUp;
+            @LiftUp.performed -= instance.OnLiftUp;
+            @LiftUp.canceled -= instance.OnLiftUp;
+            @LiftDown.started -= instance.OnLiftDown;
+            @LiftDown.performed -= instance.OnLiftDown;
+            @LiftDown.canceled -= instance.OnLiftDown;
+            @Action.started -= instance.OnAction;
+            @Action.performed -= instance.OnAction;
+            @Action.canceled -= instance.OnAction;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -357,5 +444,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnSpace(InputAction.CallbackContext context);
         void OnV(InputAction.CallbackContext context);
         void OnExit(InputAction.CallbackContext context);
+        void OnLiftUp(InputAction.CallbackContext context);
+        void OnLiftDown(InputAction.CallbackContext context);
+        void OnAction(InputAction.CallbackContext context);
     }
 }

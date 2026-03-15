@@ -23,8 +23,17 @@ namespace Game.Scripts.LiveObjects
         public static event Action onHackComplete;
         public static event Action onHackEnded;
 
+        // NEW INPUT SYSTEM
+        private PlayerInputActions _input;
+
+        private void Awake()
+        {
+            _input = new PlayerInputActions();
+        }
+
         private void OnEnable()
         {
+            _input.Player.Enable();
             InteractableZone.onHoldStarted += InteractableZone_onHoldStarted;
             InteractableZone.onHoldEnded += InteractableZone_onHoldEnded;
         }
@@ -33,25 +42,47 @@ namespace Game.Scripts.LiveObjects
         {
             if (_hacked == true)
             {
-                if (Input.GetKeyDown(KeyCode.E))
+                // OLD INPUT SYSTEM
+                //if (Input.GetKeyDown(KeyCode.E))
+                //{
+                //    var previous = _activeCamera;
+                //    _activeCamera++;
+
+
+                //    if (_activeCamera >= _cameras.Length)
+                //        _activeCamera = 0;
+
+
+                //    _cameras[_activeCamera].Priority = 11;
+                //    _cameras[previous].Priority = 9;
+                //}
+
+                // NEW INPUT SYSTEM
+                if (_input.Player.Action.triggered)
                 {
                     var previous = _activeCamera;
                     _activeCamera++;
-
-
                     if (_activeCamera >= _cameras.Length)
                         _activeCamera = 0;
-
-
                     _cameras[_activeCamera].Priority = 11;
                     _cameras[previous].Priority = 9;
                 }
 
-                if (Input.GetKeyDown(KeyCode.Escape))
+
+                //if (Input.GetKeyDown(KeyCode.Escape))
+                //{
+                //    _hacked = false;
+                //    onHackEnded?.Invoke();
+                //    ResetCameras();
+                //}
+
+                // NEW INPUT SYSTEM
+                if (_input.Player.Exit.triggered)
                 {
                     _hacked = false;
                     onHackEnded?.Invoke();
                     ResetCameras();
+
                 }
             }
         }
@@ -110,6 +141,7 @@ namespace Game.Scripts.LiveObjects
         
         private void OnDisable()
         {
+            _input.Player.Disable();
             InteractableZone.onHoldStarted -= InteractableZone_onHoldStarted;
             InteractableZone.onHoldEnded -= InteractableZone_onHoldEnded;
         }

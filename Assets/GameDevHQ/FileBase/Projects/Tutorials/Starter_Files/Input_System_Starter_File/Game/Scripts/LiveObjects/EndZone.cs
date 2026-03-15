@@ -27,4 +27,6 @@ namespace Game.Scripts.LiveObjects
             InteractableZone.onZoneInteractionComplete -= InteractableZone_onZoneInteractionComplete;
         }
     }
+
+    // NOTE: EndZone listens to InteractableZone events; input handling happens in InteractableZone
 }

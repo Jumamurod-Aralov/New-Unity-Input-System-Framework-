@@ -23,8 +23,18 @@ namespace Game.Scripts.LiveObjects
         public static event Action onDriveModeEntered;
         public static event Action onDriveModeExited;
 
+        // NEW INPUT SYSTEM
+        private PlayerInputActions _input;
+        private Vector2 _move;
+
+        private void Awake()
+        {
+            _input = new PlayerInputActions();
+        }
+
         private void OnEnable()
         {
+            _input.Player.Enable();
             InteractableZone.onZoneInteractionComplete += EnterDriveMode;
         }
 
@@ -53,9 +63,12 @@ namespace Game.Scripts.LiveObjects
         {
             if (_inDriveMode == true)
             {
+                _move = _input.Player.Movement.ReadValue<Vector2>();
                 LiftControls();
                 CalcutateMovement();
-                if (Input.GetKeyDown(KeyCode.Escape))
+
+                //if (Input.GetKeyDown(KeyCode.Escape))
+                if (_input.Player.Exit.triggered)
                     ExitDriveMode();
             }
 
@@ -63,26 +76,49 @@ namespace Game.Scripts.LiveObjects
 
         private void CalcutateMovement()
         {
-            float h = Input.GetAxisRaw("Horizontal");
-            float v = Input.GetAxisRaw("Vertical");
-            var direction = new Vector3(0, 0, v);
+            // LEGACY INPUT SYSTEM
+            //float h = Input.GetAxisRaw("Horizontal");
+            //float v = Input.GetAxisRaw("Vertical");
+            //var direction = new Vector3(0, 0, v);
+            //var direction = new Vector3(0, 0, _move.y
+            //var velocity = direction * _speed;
+
+            //transform.Translate(velocity * Time.deltaTime);
+
+            //if (Mathf.Abs(v) > 0)
+            //{
+            //    var tempRot = transform.rotation.eulerAngles;
+            //    tempRot.y += h * _speed / 2;
+            //    transform.rotation = Quaternion.Euler(tempRot);
+            //}
+
+            // NEW INPUT SYSTEM
+            // Forward/backward movement
+            var direction = new Vector3(0, 0, _move.y);
             var velocity = direction * _speed;
 
             transform.Translate(velocity * Time.deltaTime);
 
-            if (Mathf.Abs(v) > 0)
+            // Apply rotation if moving forward/backward
+            if (Mathf.Abs(_move.y) > 0)
             {
                 var tempRot = transform.rotation.eulerAngles;
-                tempRot.y += h * _speed / 2;
+                tempRot.y += _move.x * _speed / 2;
                 transform.rotation = Quaternion.Euler(tempRot);
             }
         }
 
         private void LiftControls()
         {
-            if (Input.GetKey(KeyCode.R))
+            //if (Input.GetKey(KeyCode.R))
+            //    LiftUpRoutine();
+            //else if (Input.GetKey(KeyCode.T))
+            //    LiftDownRoutine();
+
+            // NEW INPUT SYSTEM
+            if (_input.Player.LiftUp.IsPressed())
                 LiftUpRoutine();
-            else if (Input.GetKey(KeyCode.T))
+            else if (_input.Player.LiftDown.IsPressed())
                 LiftDownRoutine();
         }
 
@@ -112,6 +148,7 @@ namespace Game.Scripts.LiveObjects
 
         private void OnDisable()
         {
+            _input.Player.Disable();
             InteractableZone.onZoneInteractionComplete -= EnterDriveMode;
         }
 
