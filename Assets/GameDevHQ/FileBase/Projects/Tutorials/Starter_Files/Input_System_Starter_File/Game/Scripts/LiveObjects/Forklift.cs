@@ -6,19 +6,13 @@ namespace Game.Scripts.LiveObjects
 {
     public class Forklift : MonoBehaviour
     {
-        [SerializeField]
-        private GameObject _lift, _steeringWheel, _leftWheel, _rightWheel, _rearWheels;
-        [SerializeField]
-        private Vector3 _liftLowerLimit, _liftUpperLimit;
-        [SerializeField]
-        private float _speed = 5f, _liftSpeed = 1f;
-        [SerializeField]
-        private CinemachineVirtualCamera _forkliftCam;
-        [SerializeField]
-        private GameObject _driverModel;
+        [SerializeField] private GameObject _lift, _steeringWheel, _leftWheel, _rightWheel, _rearWheels;
+        [SerializeField] private Vector3 _liftLowerLimit, _liftUpperLimit;
+        [SerializeField] private float _speed = 5f, _liftSpeed = 1f;
+        [SerializeField] private CinemachineVirtualCamera _forkliftCam;
+        [SerializeField] private GameObject _driverModel;
         private bool _inDriveMode = false;
-        [SerializeField]
-        private InteractableZone _interactableZone;
+        [SerializeField] private InteractableZone _interactableZone;
 
         public static event Action onDriveModeEntered;
         public static event Action onDriveModeExited;
@@ -34,7 +28,7 @@ namespace Game.Scripts.LiveObjects
 
         private void OnEnable()
         {
-            _input.Player.Enable();
+            _input.Forklift.Enable();
             InteractableZone.onZoneInteractionComplete += EnterDriveMode;
         }
 
@@ -63,12 +57,12 @@ namespace Game.Scripts.LiveObjects
         {
             if (_inDriveMode == true)
             {
-                _move = _input.Player.Movement.ReadValue<Vector2>();
+                _move = _input.Forklift.Movement.ReadValue<Vector2>();
                 LiftControls();
                 CalcutateMovement();
 
                 //if (Input.GetKeyDown(KeyCode.Escape))
-                if (_input.Player.Exit.triggered)
+                if (_input.Forklift.Exit.triggered)
                     ExitDriveMode();
             }
 
@@ -116,9 +110,9 @@ namespace Game.Scripts.LiveObjects
             //    LiftDownRoutine();
 
             // NEW INPUT SYSTEM
-            if (_input.Player.LiftUp.IsPressed())
+            if (_input.Forklift.LiftUp.IsPressed())
                 LiftUpRoutine();
-            else if (_input.Player.LiftDown.IsPressed())
+            else if (_input.Forklift.LiftDown.IsPressed())
                 LiftDownRoutine();
         }
 
@@ -148,7 +142,7 @@ namespace Game.Scripts.LiveObjects
 
         private void OnDisable()
         {
-            _input.Player.Disable();
+            _input.Forklift.Disable();
             InteractableZone.onZoneInteractionComplete -= EnterDriveMode;
         }
 

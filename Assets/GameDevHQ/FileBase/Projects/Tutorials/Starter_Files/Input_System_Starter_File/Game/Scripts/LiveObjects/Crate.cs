@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Windows;
 
 namespace Game.Scripts.LiveObjects
 {
@@ -15,8 +16,16 @@ namespace Game.Scripts.LiveObjects
 
         private List<Rigidbody> _brakeOff = new List<Rigidbody>();
 
+        private PlayerInputActions _input;
+
+        private void Awake()
+        {
+            _input = new PlayerInputActions();
+        }
+
         private void OnEnable()
         {
+            _input.Player.Enable();
             InteractableZone.onZoneInteractionComplete += InteractableZone_onZoneInteractionComplete;
         }
 
@@ -34,7 +43,11 @@ namespace Game.Scripts.LiveObjects
             {
                 if (_brakeOff.Count > 0)
                 {
-                    BreakPart();
+                    //BreakPart();
+
+                    float force = _input.Player.Interact.IsPressed() ? 15f : 5f;
+                    BreakPart(force);
+
                     StartCoroutine(PunchDelay());
                 }
                 else if(_brakeOff.Count == 0)
@@ -55,12 +68,22 @@ namespace Game.Scripts.LiveObjects
 
 
 
-        public void BreakPart()
+        public void BreakPart(float forceMultiplier)
         {
+            //int rng = Random.Range(0, _brakeOff.Count);
+            //_brakeOff[rng].constraints = RigidbodyConstraints.None;
+            //_brakeOff[rng].AddForce(new Vector3(1f, 1f, 1f), ForceMode.Force);
+            //_brakeOff.Remove(_brakeOff[rng]);
+            
             int rng = Random.Range(0, _brakeOff.Count);
-            _brakeOff[rng].constraints = RigidbodyConstraints.None;
-            _brakeOff[rng].AddForce(new Vector3(1f, 1f, 1f), ForceMode.Force);
-            _brakeOff.Remove(_brakeOff[rng]);            
+
+            Rigidbody piece = _brakeOff[rng];
+            piece.constraints = RigidbodyConstraints.None;
+
+            Vector3 force = new Vector3(1f, 1f, 1f) * forceMultiplier;
+            piece.AddForce(force, ForceMode.Impulse);
+
+            _brakeOff.Remove(piece);
         }
 
         IEnumerator PunchDelay()
@@ -77,6 +100,7 @@ namespace Game.Scripts.LiveObjects
 
         private void OnDisable()
         {
+            _input.Player.Disable();
             InteractableZone.onZoneInteractionComplete -= InteractableZone_onZoneInteractionComplete;
         }
     }

@@ -23,13 +23,13 @@ namespace Game.Scripts.Player
         [SerializeField]
         private GameObject _model;
 
-        private PlayerInputActions _input;
+        [SerializeField] private PlayerInputActions _input;
         private Vector2 _move;
         private float _rotationSpeed = 200f; 
 
         private void Awake()
         {
-            _input = GetComponent<PlayerInputActions>();
+            _input = new PlayerInputActions();
         }
 
         private void OnEnable()
