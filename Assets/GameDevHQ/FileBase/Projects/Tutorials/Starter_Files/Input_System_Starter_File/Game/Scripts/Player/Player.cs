@@ -25,10 +25,17 @@ namespace Game.Scripts.Player
 
         private PlayerInputActions _input;
         private Vector2 _move;
+        private float _rotationSpeed = 200f; 
 
+        private void Awake()
+        {
+            _input = GetComponent<PlayerInputActions>();
+        }
 
         private void OnEnable()
         {
+            _input.Player.Enable();
+
             InteractableZone.onZoneInteractionComplete += InteractableZone_onZoneInteractionComplete;
             Laptop.onHackComplete += ReleasePlayerControl;
             Laptop.onHackEnded += ReturnPlayerControl;
@@ -77,7 +84,7 @@ namespace Game.Scripts.Player
             float h = _move.x;
             float v = _move.y;
 
-            transform.Rotate(transform.up, h);
+            transform.Rotate(transform.up, h * _rotationSpeed * Time.deltaTime);
             var direction = transform.forward * v;
 
             var velocity = direction * _speed;
@@ -135,6 +142,8 @@ namespace Game.Scripts.Player
 
         private void OnDisable()
         {
+            _input.Player.Disable();
+
             InteractableZone.onZoneInteractionComplete -= InteractableZone_onZoneInteractionComplete;
             Laptop.onHackComplete -= ReleasePlayerControl;
             Laptop.onHackEnded -= ReturnPlayerControl;
